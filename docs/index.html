@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sweets Dispenser</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🍬 Sweets Dispenser</h1>
+    </header>
+
+    <main>
+        <div id="state-connecting" class="card">
+            <div class="spinner"></div>
+            <p>Connecting…</p>
+        </div>
+
+        <div id="state-success" class="card" hidden>
+            <div class="icon">✅</div>
+            <p id="msg-success"></p>
+        </div>
+
+        <div id="state-error" class="card error" hidden>
+            <div class="icon">❌</div>
+            <p id="msg-error"></p>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
