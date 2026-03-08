@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,20 +16,40 @@
     </header>
 
     <main>
-        <div id="state-connecting" class="card">
-            <div class="spinner"></div>
-            <p>Connecting…</p>
+
+        <!-- Home Screen -->
+        <div id="view-home" class="view" hidden>
+            <div class="toggle-row">
+                <span class="toggle-label">Trump</span>
+                <label class="switch">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Einstein</span>
+            </div>
+            <div class="challenge-buttons">
+                <button class="challenge-btn" id="btn-mathe">Mathe</button>
+                <button class="challenge-btn" disabled>Physik</button>
+                <button class="challenge-btn" disabled>Erdkunde</button>
+                <button class="challenge-btn" disabled>Geschichte</button>
+            </div>
         </div>
 
-        <div id="state-success" class="card" hidden>
-            <div class="icon">✅</div>
-            <p id="msg-success"></p>
+        <!-- Mathe Challenge -->
+        <div id="view-mathe" class="view" hidden>
+            <h2>Mathe</h2>
+            <div id="equations"></div>
+            <div id="points-display" hidden></div>
+            <p id="mqtt-status" class="mqtt-status" hidden></p>
+            <button id="btn-senden">Senden</button>
         </div>
 
-        <div id="state-error" class="card error" hidden>
+        <!-- Error -->
+        <div id="view-error" class="view card error" hidden>
             <div class="icon">❌</div>
             <p id="msg-error"></p>
         </div>
+
     </main>
 
     <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
