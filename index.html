@@ -32,9 +32,9 @@
             </div>
             <div class="challenge-buttons">
                 <button class="challenge-btn" id="btn-mathe">Mathe</button>
-                <button class="challenge-btn" disabled>Physik</button>
-                <button class="challenge-btn" disabled>Erdkunde</button>
-                <button class="challenge-btn" disabled>Geschichte</button>
+                <button class="challenge-btn" id="btn-physik">Physik</button>
+                <button class="challenge-btn" id="btn-erdkunde">Erdkunde</button>
+                <button class="challenge-btn" id="btn-geschichte">Geschichte</button>
             </div>
             <p id="no-credits-msg" class="no-credits-msg" hidden>
                 Schlüssel abgelaufen.<br>Bitte QR-Code neu scannen.
@@ -50,6 +50,15 @@
             <button id="btn-senden">Senden</button>
         </div>
 
+        <!-- Multiple-Choice Challenge -->
+        <div id="view-mc" class="view" hidden>
+            <h2 id="mc-title">Physik</h2>
+            <div id="mc-questions"></div>
+            <div id="mc-points-display" hidden></div>
+            <p id="mc-mqtt-status" class="mqtt-status" hidden></p>
+            <button id="btn-mc-senden">Senden</button>
+        </div>
+
         <!-- Error -->
         <div id="view-error" class="view card error" hidden>
             <div class="icon">❌</div>
@@ -59,6 +68,9 @@
     </main>
 
     <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+    <script src="questions_physik.js"></script>
+    <script src="questions_erdkunde.js"></script>
+    <script src="questions_geschichte.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

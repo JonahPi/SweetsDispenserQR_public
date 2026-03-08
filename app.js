@@ -74,11 +74,7 @@ function generateQuestion(op, einstein) {
 }
 
 // --- MQTT: publish result in background, update status text ---
-function publishResult(points) {
-    const statusEl = document.getElementById('mqtt-status');
-    statusEl.textContent = '📡 Sende Ergebnis…';
-    statusEl.hidden = false;
-
+function publishResultTo(statusEl, points) {
     const payload = key + '/' + points;
     const client = mqtt.connect(MQTT_BROKER, {
         clientId: MQTT_CLIENT,
@@ -114,7 +110,9 @@ let creditsRemaining = 4;
 function updateHomeScreen() {
     document.getElementById('credits-display').textContent = 'Credits: ' + creditsRemaining;
     const expired = creditsRemaining <= 0;
-    document.getElementById('btn-mathe').disabled = expired;
+    ['btn-mathe', 'btn-physik', 'btn-erdkunde', 'btn-geschichte'].forEach(id => {
+        document.getElementById(id).disabled = expired;
+    });
     document.getElementById('no-credits-msg').hidden = !expired;
 }
 
@@ -179,7 +177,7 @@ function doSubmit() {
     creditsRemaining--;
     document.getElementById('btn-senden').textContent = 'Neu Starten';
 
-    publishResult(points);
+    publishResultTo(document.getElementById('mqtt-status'), points);
 }
 
 document.getElementById('btn-senden').addEventListener('click', () => {
@@ -192,6 +190,95 @@ document.getElementById('btn-senden').addEventListener('click', () => {
     }
 });
 
+// --- Multiple-Choice challenge ---
+let mcQuestions = [];
+let mcAnswers   = [];
+let mcSubject   = '';
+let mcSubmitted = false;
+
+function startMC(subject, pool) {
+    mcSubject   = subject;
+    mcSubmitted = false;
+    const einstein = document.getElementById('mode-toggle').checked;
+    const filtered = pool.filter(q => einstein ? q.d : !q.d);
+    // Pick 4 random questions
+    const shuffled = filtered.slice().sort(() => Math.random() - 0.5);
+    mcQuestions = shuffled.slice(0, 4);
+    mcAnswers   = [null, null, null, null];
+
+    document.getElementById('mc-title').textContent = subject;
+    document.getElementById('mc-points-display').hidden = true;
+    document.getElementById('mc-mqtt-status').hidden    = true;
+    document.getElementById('btn-mc-senden').textContent = 'Senden';
+
+    const container = document.getElementById('mc-questions');
+    container.innerHTML = '';
+    mcQuestions.forEach((q, qi) => {
+        const block = document.createElement('div');
+        block.className = 'mc-block';
+        block.innerHTML = `<p class="mc-question-text">${q.q}</p>`;
+        q.o.forEach((opt, oi) => {
+            const btn = document.createElement('button');
+            btn.className  = 'mc-option';
+            btn.textContent = opt;
+            btn.dataset.qi  = qi;
+            btn.dataset.oi  = oi;
+            btn.addEventListener('click', () => {
+                if (mcSubmitted) return;
+                mcAnswers[qi] = oi;
+                // highlight selection
+                block.querySelectorAll('.mc-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+            block.appendChild(btn);
+        });
+        container.appendChild(block);
+    });
+
+    showView('view-mc');
+}
+
+function submitMC() {
+    mcSubmitted = true;
+    let correct = 0;
+    mcQuestions.forEach((q, qi) => {
+        const block = document.getElementById('mc-questions').children[qi];
+        block.querySelectorAll('.mc-option').forEach((btn, oi) => {
+            btn.disabled = true;
+            if (oi === q.a) {
+                btn.classList.add('mc-correct');
+            } else if (oi === mcAnswers[qi] && mcAnswers[qi] !== q.a) {
+                btn.classList.add('mc-wrong');
+            }
+        });
+        if (mcAnswers[qi] === q.a) correct++;
+    });
+
+    const points   = correct === 4 ? 2 : correct === 3 ? 1 : 0;
+    const msgs     = ['0 Punkte – Kein Süsses 😅', '1 Punkt – 1 M&M 🍬', '2 Punkte – 2 M&Ms 🍬🍬'];
+    const pointsEl = document.getElementById('mc-points-display');
+    pointsEl.textContent = msgs[points];
+    pointsEl.hidden = false;
+
+    creditsRemaining--;
+    document.getElementById('btn-mc-senden').textContent = 'Neu Starten';
+
+    const statusEl = document.getElementById('mc-mqtt-status');
+    statusEl.textContent = '📡 Sende Ergebnis…';
+    statusEl.hidden = false;
+    publishResultTo(statusEl, points);
+}
+
+document.getElementById('btn-mc-senden').addEventListener('click', () => {
+    if (mcSubmitted) {
+        mcSubmitted = false;
+        showView('view-home');
+        updateHomeScreen();
+    } else {
+        submitMC();
+    }
+});
+
 // --- Initialization ---
 if (!key) {
     showView('view-error');
@@ -201,6 +288,9 @@ if (!key) {
     showView('view-home');
     updateHomeScreen();
     document.getElementById('btn-mathe').addEventListener('click', startMathe);
+    document.getElementById('btn-physik').addEventListener('click',    () => startMC('Physik',    QUESTIONS_PHYSIK));
+    document.getElementById('btn-erdkunde').addEventListener('click',  () => startMC('Erdkunde',  QUESTIONS_ERDKUNDE));
+    document.getElementById('btn-geschichte').addEventListener('click',() => startMC('Geschichte',QUESTIONS_GESCHICHTE));
 }
 
 // --- Service worker ---
