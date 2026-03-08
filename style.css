@@ -4,6 +4,8 @@
     padding: 0;
 }
 
+[hidden] { display: none !important; }
+
 body {
     font-family: system-ui, sans-serif;
     background: #1a1a2e;
@@ -61,6 +63,21 @@ main {
 }
 
 /* ---- Home screen ---- */
+.credits-row {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding-top: 1.2rem;
+    color: #e94560;
+}
+
+.no-credits-msg {
+    text-align: center;
+    color: #e94560;
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
 .toggle-row {
     display: flex;
     align-items: center;

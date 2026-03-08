@@ -108,6 +108,16 @@ function publishResult(points) {
     }, 12000);
 }
 
+// --- Credits ---
+let creditsRemaining = 4;
+
+function updateHomeScreen() {
+    document.getElementById('credits-display').textContent = 'Credits: ' + creditsRemaining;
+    const expired = creditsRemaining <= 0;
+    document.getElementById('btn-mathe').disabled = expired;
+    document.getElementById('no-credits-msg').hidden = !expired;
+}
+
 // --- Mathe challenge ---
 let questions = [];
 let submitted = false;
@@ -166,6 +176,7 @@ function doSubmit() {
     pointsEl.textContent = pointsMsgs[points];
     pointsEl.hidden = false;
 
+    creditsRemaining--;
     document.getElementById('btn-senden').textContent = 'Neu Starten';
 
     publishResult(points);
@@ -175,6 +186,7 @@ document.getElementById('btn-senden').addEventListener('click', () => {
     if (submitted) {
         submitted = false;
         showView('view-home');
+        updateHomeScreen();
     } else {
         doSubmit();
     }
@@ -187,6 +199,7 @@ if (!key) {
         'Kein Schlüssel in der URL. Bitte den QR-Code erneut scannen.';
 } else {
     showView('view-home');
+    updateHomeScreen();
     document.getElementById('btn-mathe').addEventListener('click', startMathe);
 }
 
