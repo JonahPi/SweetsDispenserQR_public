@@ -24,24 +24,27 @@ function generateQuestion(op, einstein) {
     let a, b, c;
 
     if (!einstein) {
-        // Trump mode: single-digit operands, result 3–9
+        // Trump mode: single-digit operands (2–9, never 0 or 1), result 3–9
         switch (op) {
             case '+':
-                c = randInt(3, 9);
-                a = randInt(1, c - 1);
+                // a,b ≥ 2 → min result 4
+                c = randInt(4, 9);
+                a = randInt(2, c - 2);
                 b = c - a;
                 break;
             case '-':
-                c = randInt(3, 9);
-                b = randInt(1, 9 - c);
+                // b ≥ 2, a = c+b ≤ 9 → c ≤ 7
+                c = randInt(3, 7);
+                b = randInt(2, 9 - c);
                 a = c + b;
                 break;
             case '*':
-                do { a = randInt(1, 9); b = randInt(1, 9); c = a * b; } while (c < 3 || c > 9);
+                do { a = randInt(2, 9); b = randInt(2, 9); c = a * b; } while (c < 4 || c > 9);
                 break;
             case '/':
-                c = randInt(3, 9);
-                b = randInt(1, Math.floor(9 / c));
+                // b ≥ 2, a = c*b ≤ 9 → c ≤ 4
+                c = randInt(2, 4);
+                b = randInt(2, Math.floor(9 / c));
                 a = c * b;
                 break;
         }
