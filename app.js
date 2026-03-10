@@ -1,5 +1,5 @@
 // Sweets Dispenser PWA – Challenge Mode
-// Reads the `key` URL parameter, presents a math challenge, then publishes key/points to MQTT.
+// Reads the `key` URL parameter, presents a math challenge, then publishes key/points/mode/challenge to MQTT.
 
 const MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
 const MQTT_TOPIC  = 'SweetsReward';
@@ -24,7 +24,7 @@ function generateQuestion(op, einstein) {
     let a, b, c;
 
     if (!einstein) {
-        // Trump mode: single-digit operands (2–9, never 0 or 1), result 3–9
+        // Kids mode: single-digit operands (2–9, never 0 or 1), result 3–9
         switch (op) {
             case '+':
                 // a,b ≥ 2 → min result 4
@@ -77,8 +77,9 @@ function generateQuestion(op, einstein) {
 }
 
 // --- MQTT: publish result in background, update status text ---
-function publishResultTo(statusEl, points) {
-    const payload = key + '/' + points;
+// mode: 'kids' | 'std'   challenge: 'mathe' | 'physik' | 'erdkunde' | 'geschichte'
+function publishResultTo(statusEl, points, mode, challenge) {
+    const payload = key + '/' + points + '/' + mode + '/' + challenge;
     const client = mqtt.connect(MQTT_BROKER, {
         clientId: MQTT_CLIENT,
         connectTimeout: 10000,
@@ -180,7 +181,8 @@ function doSubmit() {
     creditsRemaining--;
     document.getElementById('btn-senden').textContent = 'Neu Starten';
 
-    publishResultTo(document.getElementById('mqtt-status'), points);
+    const mode = document.getElementById('mode-toggle').checked ? 'std' : 'kids';
+    publishResultTo(document.getElementById('mqtt-status'), points, mode, 'mathe');
 }
 
 document.getElementById('btn-senden').addEventListener('click', () => {
@@ -269,7 +271,8 @@ function submitMC() {
     const statusEl = document.getElementById('mc-mqtt-status');
     statusEl.textContent = '📡 Sende Ergebnis…';
     statusEl.hidden = false;
-    publishResultTo(statusEl, points);
+    const mode = document.getElementById('mode-toggle').checked ? 'std' : 'kids';
+    publishResultTo(statusEl, points, mode, mcSubject.toLowerCase());
 }
 
 document.getElementById('btn-mc-senden').addEventListener('click', () => {
