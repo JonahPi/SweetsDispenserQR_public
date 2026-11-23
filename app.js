@@ -3,6 +3,8 @@
 
 const MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
 const MQTT_TOPIC  = 'SweetsReward';
+const MQTT_TOPIC_REFILL = 'SweetsRefill';
+const FILL_FULL   = 161;   // M&Ms in one filling, must match FILL_FULL in the firmware config.py
 const MQTT_CLIENT = 'SweetsDispenserPWA-' + Math.random().toString(16).slice(2, 8);
 
 const key = new URLSearchParams(window.location.search).get('key');
@@ -76,22 +78,26 @@ function generateQuestion(op, einstein) {
     return { a, op, b, c };
 }
 
-// --- MQTT: publish result in background, update status text ---
+// --- MQTT: publish in background, update status text ---
 // mode: 'kids' | 'std'   challenge: 'mathe' | 'physik' | 'erdkunde' | 'geschichte' | 'fablab'
 function publishResultTo(statusEl, points, mode, challenge) {
-    const payload = key + '/' + points + '/' + mode + '/' + challenge;
+    publishTo(statusEl, MQTT_TOPIC, key + '/' + points + '/' + mode + '/' + challenge,
+              '✅ Ergebnis übermittelt!', 'Ergebnis nicht übermittelt.');
+}
+
+function publishTo(statusEl, topic, payload, okText, timeoutText) {
     const client = mqtt.connect(MQTT_BROKER, {
         clientId: MQTT_CLIENT,
         connectTimeout: 10000,
     });
 
     client.on('connect', () => {
-        client.publish(MQTT_TOPIC, payload, { qos: 1 }, (err) => {
+        client.publish(topic, payload, { qos: 1 }, (err) => {
             client.end();
             if (err) {
                 statusEl.textContent = '❌ Senden fehlgeschlagen: ' + err.message;
             } else {
-                statusEl.textContent = '✅ Ergebnis übermittelt!';
+                statusEl.textContent = okText;
             }
         });
     });
@@ -103,7 +109,7 @@ function publishResultTo(statusEl, points, mode, challenge) {
     setTimeout(() => {
         if (!client.connected) {
             client.end(true);
-            statusEl.textContent = '❌ Zeitüberschreitung. Ergebnis nicht übermittelt.';
+            statusEl.textContent = '❌ Zeitüberschreitung. ' + timeoutText;
         }
     }, 12000);
 }
@@ -181,8 +187,11 @@ function doSubmit() {
     creditsRemaining--;
     document.getElementById('btn-senden').textContent = 'Neu Starten';
 
+    const statusEl = document.getElementById('mqtt-status');
+    statusEl.textContent = '📡 Sende Ergebnis…';
+    statusEl.hidden = false;
     const mode = document.getElementById('mode-toggle').checked ? 'std' : 'kids';
-    publishResultTo(document.getElementById('mqtt-status'), points, mode, 'mathe');
+    publishResultTo(statusEl, points, mode, 'mathe');
 }
 
 document.getElementById('btn-senden').addEventListener('click', () => {
@@ -285,6 +294,17 @@ document.getElementById('btn-mc-senden').addEventListener('click', () => {
     }
 });
 
+// --- Refill button (top right) ---
+function refill() {
+    if (!confirm('Wurde der Automat nachgefüllt (' + FILL_FULL + ' M&Ms)?
+Der Füllstand wird auf 100 % gesetzt.')) return;
+    const statusEl = document.getElementById('refill-status');
+    statusEl.textContent = '📡 Sende Nachfüllung…';
+    statusEl.hidden = false;
+    publishTo(statusEl, MQTT_TOPIC_REFILL, key,
+              '✅ Nachfüllung gemeldet.', 'Nachfüllung nicht übermittelt.');
+}
+
 // --- Initialization ---
 if (!key) {
     showView('view-error');
@@ -293,6 +313,9 @@ if (!key) {
 } else {
     showView('view-home');
     updateHomeScreen();
+    const refillBtn = document.getElementById('btn-refill');
+    refillBtn.hidden = false;
+    refillBtn.addEventListener('click', refill);
     document.getElementById('btn-mathe').addEventListener('click', startMathe);
     document.getElementById('btn-physik').addEventListener('click',    () => startMC('Physik',    QUESTIONS_PHYSIK));
     document.getElementById('btn-erdkunde').addEventListener('click',  () => startMC('Erdkunde',  QUESTIONS_ERDKUNDE));

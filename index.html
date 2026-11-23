@@ -13,6 +13,7 @@
 <body>
     <header>
         <h1>🍬 Sweets Dispenser</h1>
+        <button id="btn-refill" class="refill-btn" title="Automat nachgefüllt" aria-label="Automat nachgefüllt" hidden>🔄</button>
     </header>
 
     <main>
@@ -37,6 +38,7 @@
                 <button class="challenge-btn" id="btn-geschichte">Geschi/Poli</button>
                 <button class="challenge-btn challenge-btn-wide" id="btn-fablab">Fablab</button>
             </div>
+            <p id="refill-status" class="mqtt-status" hidden></p>
             <p id="no-credits-msg" class="no-credits-msg" hidden>
                 Schlüssel abgelaufen.<br>Bitte QR-Code neu scannen.
             </p>
