@@ -296,8 +296,7 @@ document.getElementById('btn-mc-senden').addEventListener('click', () => {
 
 // --- Refill button (top right) ---
 function refill() {
-    if (!confirm('Wurde der Automat nachgefüllt (' + FILL_FULL + ' M&Ms)?
-Der Füllstand wird auf 100 % gesetzt.')) return;
+    if (!confirm('Wurde der Automat nachgefüllt (' + FILL_FULL + ' M&Ms)?\nDer Füllstand wird auf 100 % gesetzt.')) return;
     const statusEl = document.getElementById('refill-status');
     statusEl.textContent = '📡 Sende Nachfüllung…';
     statusEl.hidden = false;
