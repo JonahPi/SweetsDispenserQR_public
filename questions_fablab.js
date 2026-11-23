@@ -1,0 +1,20 @@
+// Fablab Zürich – 17 Fragen (gleiche Fragen für Kids d:false und Standard d:true)
+const QUESTIONS_FABLAB = [
+    { q: "Wie hoch ist der jährliche Mitgliederbeitrag im Fablab?", o: ["56 CHF", "100 CHF", "156 CHF", "256 CHF"], a: 2 },
+    { q: "Wie viel Rabatt auf den Mitgliederbeitrag gibt es mit der KulturLegi?", o: ["10 %", "25 %", "50 %", "Keinen"], a: 2 },
+    { q: "Was kostet eine Maschinenstunde am Laser oder an der CNC?", o: ["2 CHF", "10 CHF", "20 CHF", "50 CHF"], a: 2 },
+    { q: "Was kostet eine Stunde am 3D-Drucker?", o: ["Gratis", "2 CHF", "10 CHF", "20 CHF"], a: 1 },
+    { q: "Wo kann ich vorschlagen, dass das Fablab eine neue Maschine anschafft?", o: ["Per Brief an die Stadt", "Im Slack-Channel #anregungen", "Gar nicht, das entscheidet nur der Vorstand", "Auf Instagram"], a: 1 },
+    { q: "Wer darf im Fablab-Wiki mitschreiben?", o: ["Nur der Vorstand", "Nur der Lab-Manager", "Nur Mitglieder mit über 5 Jahren", "Alle"], a: 3 },
+    { q: "Wie kann ich den Fablab-Vorstand kontaktieren?", o: ["Über Slack oder vorstand@zurich.fablab.ch", "Nur persönlich an der GV", "Per Fax", "Gar nicht"], a: 0 },
+    { q: "Wer darf im Fablab Workshops anbieten?", o: ["Nur der Vorstand", "Nur Lehrpersonen", "Alle", "Nur externe Firmen"], a: 2 },
+    { q: "Welches Material darf NICHT gelasert werden?", o: ["Holz und Karton", "PVC und Metall", "Acrylglas (PMMA)", "Papier und Leder"], a: 1 },
+    { q: "Wie heisst die handgeführte CNC-Fräse im Fablab?", o: ["Shaper Origin", "Prusa MK4", "Glowforge", "Cricut Maker"], a: 0 },
+    { q: "Wer hat die meisten selbstgebauten Maschinen im Fablab gebaut?", o: ["Der Lab-Manager", "Werner", "Der Vorstand", "Ein Roboter"], a: 1 },
+    { q: "Wie nennt man eine Maschine, die Gegenstände Schicht für Schicht aus Kunststoff druckt?", o: ["Lasercutter", "Schneideplotter", "3D-Drucker", "CNC-Fräse"], a: 2 },
+    { q: "Dürfen Kinder ohne Eltern ins Fablab?", o: ["Ja, immer", "Nein, nie", "Ja, ab 14 Jahren und wenn die Eltern einverstanden sind", "Ja, ab 10 Jahren"], a: 2 },
+    { q: "Wen frage ich, wenn ich nicht sicher bin, wie man eine Maschine bedient?", o: ["Niemanden, einfach ausprobieren", "Den Lab-Manager", "Die Polizei", "Den Hersteller per E-Mail"], a: 1 },
+    { q: "Darf ich Material im Fablab lagern?", o: ["Nein, nie", "Ja, unbegrenzt", "Ja, max. 3 Wochen mit einem Kleber drauf", "Ja, max. 1 Jahr"], a: 2 },
+    { q: "Wer ist dafür verantwortlich, dass das Fablab aufgeräumt ist?", o: ["Der Lab-Manager", "Der Vorstand", "Eine Putzfirma", "Du"], a: 3 },
+    { q: "Was passiert, wenn ich etwas kaputt mache?", o: ["Ich muss alles bezahlen", "Ich werde ausgeschlossen", "Kein Problem, wenn es nicht absichtlich war", "Ich muss es selbst reparieren"], a: 2 },
+].flatMap(q => [{ ...q, d: false }, { ...q, d: true }]);

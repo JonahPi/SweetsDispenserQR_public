@@ -77,7 +77,7 @@ function generateQuestion(op, einstein) {
 }
 
 // --- MQTT: publish result in background, update status text ---
-// mode: 'kids' | 'std'   challenge: 'mathe' | 'physik' | 'erdkunde' | 'geschichte'
+// mode: 'kids' | 'std'   challenge: 'mathe' | 'physik' | 'erdkunde' | 'geschichte' | 'fablab'
 function publishResultTo(statusEl, points, mode, challenge) {
     const payload = key + '/' + points + '/' + mode + '/' + challenge;
     const client = mqtt.connect(MQTT_BROKER, {
@@ -114,7 +114,7 @@ let creditsRemaining = 4;
 function updateHomeScreen() {
     document.getElementById('credits-display').textContent = 'Credits: ' + creditsRemaining;
     const expired = creditsRemaining <= 0;
-    ['btn-mathe', 'btn-physik', 'btn-erdkunde', 'btn-geschichte'].forEach(id => {
+    ['btn-mathe', 'btn-physik', 'btn-erdkunde', 'btn-geschichte', 'btn-fablab'].forEach(id => {
         document.getElementById(id).disabled = expired;
     });
     document.getElementById('no-credits-msg').hidden = !expired;
@@ -297,6 +297,7 @@ if (!key) {
     document.getElementById('btn-physik').addEventListener('click',    () => startMC('Physik',    QUESTIONS_PHYSIK));
     document.getElementById('btn-erdkunde').addEventListener('click',  () => startMC('Erdkunde',  QUESTIONS_ERDKUNDE));
     document.getElementById('btn-geschichte').addEventListener('click',() => startMC('Geschichte',QUESTIONS_GESCHICHTE));
+    document.getElementById('btn-fablab').addEventListener('click',    () => startMC('Fablab',    QUESTIONS_FABLAB));
 }
 
 // --- Service worker ---

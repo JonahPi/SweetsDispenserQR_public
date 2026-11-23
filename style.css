@@ -153,6 +153,10 @@ input:checked + .slider::before {
     transition: opacity 0.15s, transform 0.1s;
 }
 
+.challenge-btn-wide {
+    grid-column: 1 / -1;
+}
+
 .challenge-btn:active {
     transform: scale(0.96);
 }
